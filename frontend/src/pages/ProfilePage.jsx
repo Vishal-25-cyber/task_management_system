@@ -354,6 +354,32 @@ const ProfilePage = () => {
               enabled={systemAlerts}
               onChange={() => setSystemAlerts(!systemAlerts)}
             />
+
+            {/* Test Email Button */}
+            <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="text-sm font-medium text-slate-700 dark:text-slate-300">Test SMTP Integration</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Send a test notification to check your SMTP server status.</div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSendTestEmail}
+                  loading={emailLoading}
+                >
+                  Send Test Email
+                </Button>
+              </div>
+              {emailPreviewUrl && (
+                <div className="mt-3 p-3 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900 text-xs text-indigo-700 dark:text-indigo-300 flex items-center justify-between gap-2">
+                  <span>✉️ Email generated successfully. Open local HTML preview:</span>
+                  <a href={emailPreviewUrl} target="_blank" rel="noopener noreferrer" className="font-semibold underline hover:text-indigo-800">
+                    Open Preview
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Appearance & Themes settings */}
