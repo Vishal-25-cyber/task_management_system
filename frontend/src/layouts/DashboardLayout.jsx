@@ -320,43 +320,49 @@ const DashboardLayout = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -6 }}
                       transition={{ duration: 0.12 }}
-                      className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 backdrop-blur-sm border border-slate-200/40 dark:border-slate-800/40 rounded-xl shadow-lg z-50 overflow-hidden origin-top-right"
+                      className="absolute right-0 mt-2 w-88 bg-white dark:bg-slate-900/95 rounded-xl shadow-2xl z-50 overflow-hidden origin-top-right"
                     >
-                      <div className="px-4 py-3 flex items-center justify-between border-b border-slate-100/40 dark:border-slate-800/40">
+                      <div className="px-4 py-3 flex items-center justify-between bg-gradient-to-r from-pink-50 via-indigo-50 to-blue-50 dark:from-slate-900/60 dark:via-slate-900/50 dark:to-indigo-950">
                         <div className="flex items-center gap-3">
-                          <HiBell className="h-5 w-5 text-slate-700 dark:text-slate-200" />
-                          <span className="font-medium text-slate-800 dark:text-slate-100 text-sm">Notifications</span>
+                          <div className="h-9 w-9 rounded-full bg-white/80 dark:bg-slate-800 flex items-center justify-center shadow-sm">
+                            <HiBell className="h-5 w-5 text-indigo-600" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">Notifications</div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400">You have {totalAlertsCount} alert{totalAlertsCount !== 1 ? 's' : ''}</div>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          {totalAlertsCount > 0 && (
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-red-50 dark:bg-red-900 text-red-600 dark:text-red-300 font-medium">
-                              {totalAlertsCount}
-                            </span>
-                          )}
                           <button
-                            onClick={() => { /* placeholder: mark all read */ }}
-                            className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                            onClick={() => setShowNotifications(false)}
+                            className="text-xs px-2 py-1 rounded-full bg-white/70 text-slate-700 hover:bg-white"
                           >
-                            Mark all
+                            Dismiss
+                          </button>
+                          <button
+                            onClick={() => navigate('/notifications')}
+                            className="text-xs px-3 py-1 rounded-full bg-indigo-600 text-white hover:bg-indigo-700"
+                          >
+                            View all
                           </button>
                         </div>
                       </div>
 
-                      <div className="max-h-64 overflow-y-auto">
+                      <div className="max-h-64 overflow-y-auto p-2 space-y-2">
                         {totalAlertsCount === 0 ? (
                           <div className="p-4 text-center text-sm text-slate-500 dark:text-slate-400">
-                            🎉 No pending alerts — all tasks are on schedule.
+                            No pending alerts — relax, everything's on schedule.
                           </div>
                         ) : (
-                          <div className="p-2">
+                          <div className="p-1">
                             {overdueAlerts.map((task) => (
                               <div
                                 key={task._id}
                                 onClick={() => { setShowNotifications(false); navigate('/tasks'); }}
-                                className="flex items-center gap-3 p-3 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer"
+                                className="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-slate-900 hover:shadow-md cursor-pointer"
                               >
-                                <div className="flex-shrink-0 h-10 w-10 rounded-md bg-red-50 dark:bg-red-900 flex items-center justify-center">
-                                  <span className="text-red-600 dark:text-red-300">●</span>
+                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
+                                  <span className="text-red-600 font-bold">{task.title?.[0] || '!'}</span>
                                 </div>
                                 <div className="min-w-0 flex-1">
                                   <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{task.title}</p>
@@ -370,10 +376,10 @@ const DashboardLayout = () => {
                               <div
                                 key={task._id}
                                 onClick={() => { setShowNotifications(false); navigate('/tasks'); }}
-                                className="flex items-center gap-3 p-3 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer"
+                                className="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-slate-900 hover:shadow-md cursor-pointer"
                               >
-                                <div className="flex-shrink-0 h-10 w-10 rounded-md bg-yellow-50 dark:bg-orange-900 flex items-center justify-center">
-                                  <span className="text-orange-600 dark:text-orange-300">●</span>
+                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-100 dark:bg-orange-900 flex items-center justify-center">
+                                  <span className="text-orange-600 font-bold">{task.title?.[0] || '•'}</span>
                                 </div>
                                 <div className="min-w-0 flex-1">
                                   <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{task.title}</p>
@@ -384,10 +390,6 @@ const DashboardLayout = () => {
                             ))}
                           </div>
                         )}
-                      </div>
-
-                      <div className="px-3 py-2 border-t border-slate-100/40 dark:border-slate-800/40 text-center">
-                        <button onClick={() => navigate('/notifications')} className="text-sm text-indigo-600 hover:underline dark:text-indigo-400">View all</button>
                       </div>
                     </motion.div>
                   )}
