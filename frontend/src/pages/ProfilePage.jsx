@@ -3,9 +3,10 @@ import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import {
   HiUser, HiMail, HiCalendar, HiPencil, HiLockClosed, HiUpload,
-  HiLocationMarker, HiPhone, HiOfficeBuilding, HiTrophy, HiFire,
+  HiLocationMarker, HiPhone, HiOfficeBuilding, HiFire,
   HiLightningBolt, HiFolderOpen, HiShieldCheck
 } from 'react-icons/hi';
+import { HiTrophy } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
 import { useTaskContext } from '../context/TaskContext';
 import { authService } from '../services/authService';
