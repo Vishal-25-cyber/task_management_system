@@ -211,17 +211,6 @@ const DashboardLayout = () => {
             )}
           </AnimatePresence>
         </button>
-
-        {/* User */}
-        {!collapsed && (
-          <div className="mt-3 flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/10 dark:bg-white/5 border border-slate-200/20 dark:border-slate-700/10">
-            <Avatar name={user?.name} size="sm" />
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{user?.name}</div>
-              <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email}</div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
