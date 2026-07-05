@@ -28,6 +28,26 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    title: {
+      type: String,
+      default: '',
+    },
+    department: {
+      type: String,
+      default: '',
+    },
+    bio: {
+      type: String,
+      default: '',
+    },
+    location: {
+      type: String,
+      default: '',
+    },
+    phone: {
+      type: String,
+      default: '',
+    },
   },
   { timestamps: true }
 );

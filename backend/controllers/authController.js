@@ -30,7 +30,18 @@ const register = async (req, res) => {
     success: true,
     message: 'Account created successfully',
     token: generateToken(user._id),
-    user: { _id: user._id, name: user.name, email: user.email, avatar: user.avatar, createdAt: user.createdAt },
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      title: user.title,
+      department: user.department,
+      bio: user.bio,
+      location: user.location,
+      phone: user.phone,
+      createdAt: user.createdAt
+    },
   });
 };
 
@@ -59,7 +70,18 @@ const login = async (req, res) => {
     success: true,
     message: 'Login successful',
     token: generateToken(user._id),
-    user: { _id: user._id, name: user.name, email: user.email, avatar: user.avatar, createdAt: user.createdAt },
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      title: user.title,
+      department: user.department,
+      bio: user.bio,
+      location: user.location,
+      phone: user.phone,
+      createdAt: user.createdAt
+    },
   });
 };
 
@@ -70,7 +92,18 @@ const getProfile = async (req, res) => {
   const user = await User.findById(req.user._id);
   res.json({
     success: true,
-    user: { _id: user._id, name: user.name, email: user.email, avatar: user.avatar, createdAt: user.createdAt },
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      title: user.title,
+      department: user.department,
+      bio: user.bio,
+      location: user.location,
+      phone: user.phone,
+      createdAt: user.createdAt
+    },
   });
 };
 
@@ -83,7 +116,7 @@ const updateProfile = async (req, res) => {
     return res.status(400).json({ success: false, errors: errors.array() });
   }
 
-  const { name, email, avatar } = req.body;
+  const { name, email, avatar, title, department, bio, location, phone } = req.body;
 
   if (email && email !== req.user.email) {
     const existingUser = await User.findOne({ email });
@@ -94,14 +127,25 @@ const updateProfile = async (req, res) => {
 
   const user = await User.findByIdAndUpdate(
     req.user._id,
-    { name, email, avatar },
+    { name, email, avatar, title, department, bio, location, phone },
     { new: true, runValidators: true }
   );
 
   res.json({
     success: true,
     message: 'Profile updated successfully',
-    user: { _id: user._id, name: user.name, email: user.email, avatar: user.avatar, createdAt: user.createdAt },
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      title: user.title,
+      department: user.department,
+      bio: user.bio,
+      location: user.location,
+      phone: user.phone,
+      createdAt: user.createdAt
+    },
   });
 };
 
