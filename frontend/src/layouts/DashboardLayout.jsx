@@ -30,9 +30,13 @@ const BOTTOM_ITEMS = [
   { path: '/profile', icon: HiUser, label: 'Profile' },
 ];
 
+const MotionNavLink = motion(NavLink);
+
 const SidebarLink = ({ item, collapsed }) => (
-  <NavLink
+  <MotionNavLink
     to={item.path}
+    whileTap={{ scale: 0.95, x: 3 }}
+    transition={{ type: 'spring', stiffness: 500, damping: 15 }}
     className={({ isActive }) =>
       `flex items-center gap-3 pl-4 pr-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative border ${isActive
         ? 'bg-gradient-to-r from-indigo-500/80 to-purple-600/80 dark:from-indigo-600/75 dark:to-purple-700/75 text-white shadow-glow border-indigo-400/20 dark:border-indigo-500/20'
@@ -42,7 +46,7 @@ const SidebarLink = ({ item, collapsed }) => (
   >
     {({ isActive }) => (
       <>
-        <item.icon className={`h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-110`} />
+        <item.icon className="h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-110" />
         <AnimatePresence>
           {!collapsed && (
             <motion.span
@@ -65,7 +69,7 @@ const SidebarLink = ({ item, collapsed }) => (
         )}
       </>
     )}
-  </NavLink>
+  </MotionNavLink>
 );
 
 // Standalone clock — isolated so its 1-second tick never re-renders DashboardLayout
@@ -321,11 +325,11 @@ const DashboardLayout = () => {
                 <AnimatePresence>
                   {showNotifications && (
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 rounded-2xl shadow-xl z-50 overflow-hidden"
+                      initial={{ opacity: 0, scale: 0.92, y: -8, rotate: -0.5 }}
+                      animate={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
+                      exit={{ opacity: 0, scale: 0.92, y: -8, rotate: -0.5 }}
+                      transition={{ type: 'spring', damping: 15, stiffness: 220 }}
+                      className="absolute right-0 mt-2 w-80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 rounded-2xl shadow-xl z-50 overflow-hidden origin-top-right"
                     >
                       <div className="p-4 border-b border-slate-200/55 dark:border-slate-800/55 flex justify-between items-center">
                         <span className="font-semibold text-slate-800 dark:text-slate-200 text-sm">Notifications</span>
