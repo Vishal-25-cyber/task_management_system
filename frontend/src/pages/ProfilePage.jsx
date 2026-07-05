@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { HiUser, HiMail, HiCalendar, HiPencil, HiLockClosed, HiUpload } from 'react-icons/hi';
+import { HiUser, HiMail, HiCalendar, HiPencil, HiLockClosed, HiUpload, HiSun, HiInformationCircle, HiLogout } from 'react-icons/hi';
+import { HiSparkles } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { authService } from '../services/authService';
+import { useNavigate } from 'react-router-dom';
 import Avatar from '../components/common/Avatar';
 import Button from '../components/common/Button';
 import toast from 'react-hot-toast';
@@ -13,8 +16,26 @@ const inputClass = 'w-full px-3.5 py-2.5 text-sm rounded-lg border border-slate-
 const labelClass = 'block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5';
 const errorClass = 'text-xs text-red-500 mt-1';
 
+const ToggleSetting = ({ label, description, enabled, onChange }) => (
+  <div className="flex items-center justify-between py-4 border-b border-slate-100 dark:border-slate-800 last:border-0">
+    <div>
+      <div className="text-sm font-medium text-slate-700 dark:text-slate-300">{label}</div>
+      {description && <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{description}</div>}
+    </div>
+    <button
+      onClick={onChange}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 cursor-pointer ${enabled ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}`}
+    >
+      <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+    </button>
+  </div>
+);
+
 const ProfilePage = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -86,13 +107,19 @@ const ProfilePage = () => {
     }
   };
 
-  return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-8">Profile</h1>
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully');
+    navigate('/login');
+  };
 
-      {/* Avatar + info */}
-      <div className="card p-6 mb-6">
-        <div className="flex items-center gap-5 mb-6">
+  return (
+    <div className="p-6 max-w-2xl mx-auto space-y-6">
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Profile & Settings</h1>
+
+      {/* Profile Card */}
+      <div className="card p-6">
+        <div className="flex items-center gap-5 mb-6 border-b border-slate-100 dark:border-slate-800 pb-5">
           {/* Avatar Upload */}
           <div className="relative group cursor-pointer h-20 w-20 rounded-full shadow-md overflow-hidden flex-shrink-0">
             <Avatar name={user?.name} url={user?.avatar} size="2xl" />
@@ -155,6 +182,20 @@ const ProfilePage = () => {
         )}
       </div>
 
+      {/* Appearance Settings */}
+      <div className="card p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <HiSun className="h-5 w-5 text-slate-500" />
+          <h2 className="font-semibold text-slate-800 dark:text-slate-200">Appearance</h2>
+        </div>
+        <ToggleSetting
+          label="Dark Mode"
+          description="Switch between light and dark interface"
+          enabled={isDark}
+          onChange={toggleTheme}
+        />
+      </div>
+
       {/* Change Password */}
       <div className="card p-6">
         <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
@@ -193,6 +234,36 @@ const ProfilePage = () => {
             Update Password
           </Button>
         </form>
+      </div>
+
+      {/* About */}
+      <div className="card p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <HiInformationCircle className="h-5 w-5 text-slate-500" />
+          <h2 className="font-semibold text-slate-800 dark:text-slate-200">About</h2>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+            <HiSparkles className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <div className="font-semibold text-slate-800 dark:text-slate-200">TaskFlow Pro</div>
+            <div className="text-sm text-slate-500 dark:text-slate-400">Version 1.0.0</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Production-quality Task Management SaaS</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Danger Zone */}
+      <div className="card p-6 border-red-200 dark:border-red-900">
+        <h2 className="font-semibold text-slate-800 dark:text-slate-200 mb-4">Account</h2>
+        <Button
+          variant="danger"
+          icon={<HiLogout className="h-4 w-4" />}
+          onClick={handleLogout}
+        >
+          Sign Out
+        </Button>
       </div>
     </div>
   );

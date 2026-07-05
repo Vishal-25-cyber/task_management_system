@@ -55,7 +55,7 @@ const AppRouter = () => (
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/archived" element={<ArchivedPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/settings" element={<ProfilePage />} />
             </Route>
           </Route>
 
