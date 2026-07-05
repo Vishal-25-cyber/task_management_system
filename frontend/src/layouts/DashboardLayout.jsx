@@ -28,7 +28,6 @@ const NAV_ITEMS = [
 
 const BOTTOM_ITEMS = [
   { path: '/profile', icon: HiUser, label: 'Profile' },
-  { path: '/settings', icon: HiCog, label: 'Settings' },
 ];
 
 const SidebarLink = ({ item, collapsed }) => (
