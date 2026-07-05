@@ -45,6 +45,7 @@ const DashboardPage = () => {
   const [recentTasks, setRecentTasks] = useState([]);
   const [dueTodayTasks, setDueTodayTasks] = useState([]);
   const [overdueTasks, setOverdueTasks] = useState([]);
+  const [highPriorityTask, setHighPriorityTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
@@ -72,6 +73,17 @@ const DashboardPage = () => {
       setRecentTasks(recentRes.data.tasks.slice(0, 5));
       setDueTodayTasks(dueTodayRes.data.tasks.filter(t => t.status !== 'Completed').slice(0, 5));
       setOverdueTasks(overdueRes.data.tasks.filter(t => t.status !== 'Completed').slice(0, 3));
+
+      // Calculate highest priority task
+      const allTasks = recentRes.data.tasks || [];
+      const highTasks = allTasks.filter(t => t.priority === 'High' && t.status !== 'Completed');
+      const sortedHigh = highTasks.sort((a, b) => {
+        if (a.dueDate && b.dueDate) return new Date(a.dueDate) - new Date(b.dueDate);
+        if (a.dueDate) return -1;
+        if (b.dueDate) return 1;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+      setHighPriorityTask(sortedHigh[0] || null);
     } catch (err) {
       console.error('Dashboard load error', err);
     } finally {
@@ -204,6 +216,35 @@ const DashboardPage = () => {
 
             {/* Right Sidebar Section */}
             <div className="space-y-6">
+              {/* Focus: Top Priority Task */}
+              {highPriorityTask && (
+                <div className="card p-5 bg-gradient-to-br from-red-500/10 to-orange-500/5 border border-red-500/20 dark:from-red-950/20 dark:to-orange-950/5 dark:border-red-900/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 rounded-lg bg-red-500 text-white shadow-sm flex-shrink-0 animate-pulse">
+                      <HiFire className="h-4 w-4" />
+                    </div>
+                    <span className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">Top Priority Task</span>
+                  </div>
+                  <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 truncate mb-1">
+                    {highPriorityTask.title}
+                  </h3>
+                  {highPriorityTask.description && (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-3">
+                      {highPriorityTask.description}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2.5 border-t border-red-500/10 dark:border-red-900/20">
+                    <span>Due: {highPriorityTask.dueDate ? formatDate(highPriorityTask.dueDate) : 'No due date'}</span>
+                    <button
+                      onClick={() => navigate('/tasks')}
+                      className="text-xs font-semibold text-red-600 dark:text-red-400 hover:underline flex items-center gap-0.5"
+                    >
+                      Focus Now <HiArrowRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Quick Actions */}
               <div className="card p-5">
                 <h2 className="font-semibold text-slate-800 dark:text-slate-200 mb-4">Quick Actions</h2>
