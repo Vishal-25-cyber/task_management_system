@@ -43,12 +43,18 @@ app.use('*', (req, res) => {
 // Global error handler
 app.use(errorHandler);
 
+const checkOverdueTasks = require('./utils/overdueChecker');
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`\n🚀 TaskFlow Pro API Server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV}`);
   console.log(`🔗 URL: http://localhost:${PORT}/api/health\n`);
+
+  // Run overdue tasks check on startup and every 15 seconds
+  setTimeout(checkOverdueTasks, 5000); // 5s delay after start
+  setInterval(checkOverdueTasks, 15000);
 });
 
 module.exports = app;

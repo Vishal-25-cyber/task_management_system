@@ -46,6 +46,10 @@ const taskSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    overdueEmailSent: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

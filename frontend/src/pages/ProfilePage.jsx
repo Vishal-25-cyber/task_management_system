@@ -233,28 +233,6 @@ const ProfilePage = () => {
               enabled={systemAlerts}
               onChange={() => setSystemAlerts(!systemAlerts)}
             />
-
-            <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/10 p-4 rounded-xl">
-              <div>
-                <h4 className="text-xs font-semibold text-slate-800 dark:text-slate-200">Send Test Email Alert</h4>
-                <p className="text-[11px] text-slate-400 mt-0.5">Send a test notification immediately to <strong>{user?.email}</strong>.</p>
-              </div>
-              <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                <Button variant="secondary" onClick={handleSendTestEmail} loading={emailLoading}>
-                  Send Test Email
-                </Button>
-                {emailPreviewUrl && (
-                  <a
-                    href={emailPreviewUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[10px] text-indigo-600 hover:text-indigo-700 underline font-medium"
-                  >
-                    🔗 Click to read test email
-                  </a>
-                )}
-              </div>
-            </div>
           </div>
 
           {/* Appearance & Themes settings */}
