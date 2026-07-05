@@ -111,12 +111,6 @@ const KanbanPage = () => {
                   <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">{col.label}</h2>
                   <Badge variant={col.variant} size="xs">{tasks[col.id]?.length || 0}</Badge>
                 </div>
-                <button
-                  onClick={() => { setDefaultStatus(col.id); setShowCreate(true); }}
-                  className="p-1 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-all"
-                >
-                  <HiPlus className="h-4 w-4" />
-                </button>
               </div>
 
               {/* Droppable */}
