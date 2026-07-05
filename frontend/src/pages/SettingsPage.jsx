@@ -33,51 +33,60 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto w-full">
       <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-8">Settings</h1>
 
-      {/* Appearance */}
-      <div className="card p-6 mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <HiSun className="h-5 w-5 text-slate-500" />
-          <h2 className="font-semibold text-slate-800 dark:text-slate-200">Appearance</h2>
-        </div>
-        <ToggleSetting
-          label="Dark Mode"
-          description="Switch between light and dark interface"
-          enabled={isDark}
-          onChange={toggleTheme}
-        />
-      </div>
-
-      {/* About */}
-      <div className="card p-6 mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <HiInformationCircle className="h-5 w-5 text-slate-500" />
-          <h2 className="font-semibold text-slate-800 dark:text-slate-200">About</h2>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-            <HiSparkles className="h-6 w-6 text-white" />
-          </div>
-          <div>
-            <div className="font-semibold text-slate-800 dark:text-slate-200">TaskFlow Pro</div>
-            <div className="text-sm text-slate-500 dark:text-slate-400">Version 1.0.0</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Production-quality Task Management SaaS</div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Side: Preferences / Appearance (2 columns) */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Appearance */}
+          <div className="card p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <HiSun className="h-5 w-5 text-slate-500" />
+              <h2 className="font-semibold text-slate-800 dark:text-slate-200">Appearance</h2>
+            </div>
+            <ToggleSetting
+              label="Dark Mode"
+              description="Switch between light and dark interface"
+              enabled={isDark}
+              onChange={toggleTheme}
+            />
           </div>
         </div>
-      </div>
 
-      {/* Danger Zone */}
-      <div className="card p-6 border-red-200 dark:border-red-900">
-        <h2 className="font-semibold text-slate-800 dark:text-slate-200 mb-4">Account</h2>
-        <Button
-          variant="danger"
-          icon={<HiLogout className="h-4 w-4" />}
-          onClick={handleLogout}
-        >
-          Sign Out
-        </Button>
+        {/* Right Side: About & Danger Zone (1 column) */}
+        <div className="space-y-6">
+          {/* About */}
+          <div className="card p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <HiInformationCircle className="h-5 w-5 text-slate-500" />
+              <h2 className="font-semibold text-slate-800 dark:text-slate-200">About</h2>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <HiSparkles className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <div className="font-semibold text-slate-800 dark:text-slate-200">TaskFlow Pro</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">Version 1.0.0</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Production-quality Task Management SaaS</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Danger Zone */}
+          <div className="card p-6 border-red-200 dark:border-red-900">
+            <h2 className="font-semibold text-slate-800 dark:text-slate-200 mb-4">Account</h2>
+            <Button
+              variant="danger"
+              icon={<HiLogout className="h-4 w-4" />}
+              onClick={handleLogout}
+              className="w-full"
+            >
+              Sign Out
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

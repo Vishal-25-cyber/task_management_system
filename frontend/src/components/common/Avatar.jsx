@@ -14,7 +14,7 @@ const getColor = (name) => {
   return COLORS[idx];
 };
 
-const Avatar = ({ name, size = 'md', className = '' }) => {
+const Avatar = ({ name, size = 'md', className = '', url }) => {
   const sizes = {
     xs:  'h-6  w-6  text-xs',
     sm:  'h-8  w-8  text-sm',
@@ -26,9 +26,13 @@ const Avatar = ({ name, size = 'md', className = '' }) => {
 
   return (
     <div
-      className={`flex-shrink-0 ${sizes[size]} rounded-full bg-gradient-to-br ${getColor(name)} flex items-center justify-center text-white font-bold shadow-sm ${className}`}
+      className={`flex-shrink-0 ${sizes[size]} rounded-full flex items-center justify-center font-bold shadow-sm overflow-hidden ${url ? 'bg-slate-100 dark:bg-slate-800' : 'bg-gradient-to-br ' + getColor(name) + ' text-white'} ${className}`}
     >
-      {getInitials(name)}
+      {url ? (
+        <img src={url} alt={name} className="h-full w-full object-cover" />
+      ) : (
+        getInitials(name)
+      )}
     </div>
   );
 };

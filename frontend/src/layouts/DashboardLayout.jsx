@@ -390,7 +390,7 @@ const DashboardLayout = () => {
                 onClick={() => navigate('/profile')}
                 className="flex items-center gap-2 p-1 rounded-xl hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
               >
-                <Avatar name={user?.name} size="sm" />
+                <Avatar name={user?.name} url={user?.avatar} size="sm" />
               </button>
             </div>
           )}
