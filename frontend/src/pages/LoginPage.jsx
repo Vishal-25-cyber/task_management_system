@@ -37,13 +37,14 @@ const LoginPage = () => {
         <p className="text-xs text-slate-400">Sign in to your account</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" autoComplete="off">
         {/* Email */}
         <div>
           <div className="relative">
             <HiMail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <input
               type="email"
+              autoComplete="off"
               {...register('email', { required: 'Email required', pattern: { value: /\S+@\S+\.\S+/, message: 'Invalid email' } })}
               className={inputClass}
               placeholder="Email address"
@@ -58,6 +59,7 @@ const LoginPage = () => {
             <HiLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <input
               type={showPwd ? 'text' : 'password'}
+              autoComplete="new-password"
               {...register('password', { required: 'Password required' })}
               className={`${inputClass} pr-10`}
               placeholder="Password"
