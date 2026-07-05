@@ -30,13 +30,9 @@ const BOTTOM_ITEMS = [
   { path: '/profile', icon: HiUser, label: 'Profile' },
 ];
 
-const MotionNavLink = motion.create(NavLink);
-
 const SidebarLink = ({ item, collapsed }) => (
-  <MotionNavLink
+  <NavLink
     to={item.path}
-    whileTap={{ scale: 0.96, x: 2 }}
-    transition={{ type: 'spring', stiffness: 500, damping: 15 }}
     className={({ isActive }) =>
       `flex items-center gap-3 pl-4 pr-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative border border-transparent ${
         isActive
@@ -47,12 +43,10 @@ const SidebarLink = ({ item, collapsed }) => (
   >
     {({ isActive }) => (
       <>
-        {/* Animated Sliding Background */}
+        {/* Active Background (static) */}
         {isActive && (
-          <motion.div
-            layoutId="sidebarActiveBackground"
+          <div
             className="absolute inset-0 bg-gradient-to-r from-indigo-500/80 to-purple-600/80 dark:from-indigo-600/75 dark:to-purple-700/75 rounded-xl border border-indigo-400/20 dark:border-indigo-500/20 z-0"
-            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
           />
         )}
 
@@ -60,18 +54,11 @@ const SidebarLink = ({ item, collapsed }) => (
           <item.icon className="h-5 w-5 transition-transform group-hover:scale-110" />
         </div>
 
-        <AnimatePresence>
-          {!collapsed && (
-            <motion.span
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: 'auto' }}
-              exit={{ opacity: 0, width: 0 }}
-              className="overflow-hidden whitespace-nowrap relative z-10"
-            >
-              {item.label}
-            </motion.span>
-          )}
-        </AnimatePresence>
+        {!collapsed && (
+          <span className="overflow-hidden whitespace-nowrap relative z-10">
+            {item.label}
+          </span>
+        )}
 
         {isActive && (
           <span className="absolute left-1.5 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full bg-white shadow-[0_0_8px_#ffffff] z-10" />
@@ -84,7 +71,7 @@ const SidebarLink = ({ item, collapsed }) => (
         )}
       </>
     )}
-  </MotionNavLink>
+  </NavLink>
 );
 
 // Standalone clock — isolated so its 1-second tick never re-renders DashboardLayout
@@ -194,13 +181,11 @@ const DashboardLayout = () => {
             <path d="M12 17l-3-3h6l-3 3z" />
           </svg>
         </div>
-        <AnimatePresence>
-          {!collapsed && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-indigo-900 dark:from-white dark:to-indigo-200 text-base tracking-wide leading-tight font-sans">TaskHub</div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {!collapsed && (
+          <div>
+            <div className="font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-indigo-900 dark:from-white dark:to-indigo-200 text-base tracking-wide leading-tight font-sans">TaskHub</div>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
@@ -223,13 +208,11 @@ const DashboardLayout = () => {
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400 transition-all group"
         >
           <HiLogout className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-          <AnimatePresence>
-            {!collapsed && (
-              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                Logout
-              </motion.span>
-            )}
-          </AnimatePresence>
+          {!collapsed && (
+            <span>
+              Logout
+            </span>
+          )}
         </button>
       </div>
     </div>
@@ -238,9 +221,8 @@ const DashboardLayout = () => {
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-950 bg-[url('/bg-light.png')] dark:bg-[url('/bg-dark.png')] bg-cover bg-center overflow-hidden transition-all duration-500">
       {/* Desktop Sidebar */}
-      <motion.aside
-        animate={{ width: sidebarCollapsed ? 76 : 260 }}
-        transition={{ duration: 0.25, ease: 'easeInOut' }}
+      <aside
+        style={{ width: sidebarCollapsed ? 76 : 260 }}
         className="hidden lg:flex flex-col bg-white/15 dark:bg-slate-950/20 backdrop-blur-2xl border border-white/20 dark:border-white/10 m-4 rounded-2xl shadow-2xl flex-shrink-0 relative group/sidebar"
       >
         {/* Glowing background accent circles to blend with wallpaper */}
@@ -254,34 +236,28 @@ const DashboardLayout = () => {
           onClick={() => setSidebarCollapsed((p) => !p)}
           className="absolute top-6 -right-3 h-6 w-6 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 shadow-md transition-all z-10 cursor-pointer"
         >
-          <motion.div animate={{ rotate: sidebarCollapsed ? 0 : 180 }}>
+          <div className={sidebarCollapsed ? 'transform rotate-0' : 'transform rotate-180'}>
             <HiChevronRight className="h-3.5 w-3.5" />
-          </motion.div>
+          </div>
         </button>
-      </motion.aside>
-      {/* Mobile Sidebar */}
-      <AnimatePresence>
-        {mobileSidebarOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-              onClick={() => setMobileSidebarOpen(false)}
-            />
-            <motion.aside
-              initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 h-full w-64 bg-white/20 dark:bg-slate-950/30 backdrop-blur-2xl border-r border-white/20 dark:border-white/10 z-50 lg:hidden relative overflow-hidden"
-            >
-              {/* Glowing background accent circles to blend with wallpaper */}
-              <div className="absolute -top-12 -left-12 h-32 w-32 bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
-              <div className="absolute -bottom-16 -right-16 h-36 w-36 bg-indigo-500/20 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      </aside>
 
-              <SidebarContent collapsed={false} />
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+      {/* Mobile Sidebar (static, no animation) */}
+      {mobileSidebarOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+          <aside className="fixed left-0 top-0 h-full w-64 bg-white/20 dark:bg-slate-950/30 backdrop-blur-2xl border-r border-white/20 dark:border-white/10 z-50 lg:hidden relative overflow-hidden">
+            {/* Glowing background accent circles to blend with wallpaper */}
+            <div className="absolute -top-12 -left-12 h-32 w-32 bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-16 -right-16 h-36 w-36 bg-indigo-500/20 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
+            <SidebarContent collapsed={false} />
+          </aside>
+        </>
+      )}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden my-4 mx-4 lg:ml-0 lg:mr-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-slate-200/40 dark:border-slate-800/40 shadow-xl">
@@ -340,27 +316,31 @@ const DashboardLayout = () => {
                 <AnimatePresence>
                   {showNotifications && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.92, y: -8, rotate: -0.5 }}
-                      animate={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
-                      exit={{ opacity: 0, scale: 0.92, y: -8, rotate: -0.5 }}
-                      transition={{ type: 'spring', damping: 15, stiffness: 220 }}
-                      className="absolute right-0 mt-2 w-80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 rounded-2xl shadow-xl z-50 overflow-hidden origin-top-right"
+                      initial={{ opacity: 0, scale: 0.96, y: -6 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.96, y: -6 }}
+                      transition={{ type: 'spring', damping: 18, stiffness: 260 }}
+                      className="absolute right-0 mt-2 w-96 bg-gradient-to-br from-indigo-600/95 to-purple-600/90 text-white backdrop-blur-lg border border-white/10 rounded-3xl shadow-2xl z-50 overflow-hidden origin-top-right"
                     >
-                      <div className="p-4 border-b border-slate-200/55 dark:border-slate-800/55 flex justify-between items-center">
-                        <span className="font-semibold text-slate-800 dark:text-slate-200 text-sm">Notifications</span>
+                      <div className="px-4 py-3 flex items-center justify-between bg-white/10">
+                        <div className="flex items-center gap-3">
+                          <HiBell className="h-5 w-5 text-white" />
+                          <span className="font-semibold text-white text-sm">Notifications</span>
+                        </div>
                         {totalAlertsCount > 0 && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 font-medium">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-red-500 text-white font-medium">
                             {totalAlertsCount} Alert{totalAlertsCount > 1 ? 's' : ''}
                           </span>
                         )}
                       </div>
-                      <div className="max-h-64 overflow-y-auto p-2 divide-y divide-slate-100/50 dark:divide-slate-800/50">
+
+                      <div className="max-h-64 overflow-y-auto p-3 space-y-2">
                         {totalAlertsCount === 0 ? (
-                          <div className="p-4 text-center text-xs text-slate-500 dark:text-slate-400">
-                            🎉 No pending alerts! All tasks are on schedule.
+                          <div className="p-6 text-center text-sm text-white/80">
+                            🎉 No pending alerts — all tasks are on schedule.
                           </div>
                         ) : (
-                          <>
+                          <> 
                             {overdueAlerts.map((task) => (
                               <div
                                 key={task._id}
@@ -368,17 +348,17 @@ const DashboardLayout = () => {
                                   setShowNotifications(false);
                                   navigate('/tasks');
                                 }}
-                                className="p-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors cursor-pointer"
+                                className="flex items-start gap-3 p-3 bg-white/10 hover:bg-white/15 rounded-xl cursor-pointer transition-colors"
                               >
-                                <div className="flex items-start gap-2">
-                                  <span className="text-red-500 mt-0.5">🔴</span>
-                                  <div className="min-w-0 flex-1">
-                                    <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{task.title}</p>
-                                    <p className="text-[10px] text-red-500 mt-0.5">Overdue: {formatDateTime(task.dueDate)}</p>
-                                  </div>
+                                <div className="flex-shrink-0 h-9 w-2 rounded-full bg-red-400" />
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-semibold truncate">{task.title}</p>
+                                  <p className="text-xs text-white/80 mt-1">Overdue · {formatDateTime(task.dueDate)}</p>
                                 </div>
+                                <div className="text-xs text-white/70 ml-2">Now</div>
                               </div>
                             ))}
+
                             {dueTodayAlerts.map((task) => (
                               <div
                                 key={task._id}
@@ -386,15 +366,14 @@ const DashboardLayout = () => {
                                   setShowNotifications(false);
                                   navigate('/tasks');
                                 }}
-                                className="p-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors cursor-pointer"
+                                className="flex items-start gap-3 p-3 bg-white/10 hover:bg-white/15 rounded-xl cursor-pointer transition-colors"
                               >
-                                <div className="flex items-start gap-2">
-                                  <span className="text-orange-500 mt-0.5">🟠</span>
-                                  <div className="min-w-0 flex-1">
-                                    <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{task.title}</p>
-                                    <p className="text-[10px] text-orange-500 mt-0.5">Due Today: {formatDateTime(task.dueDate)}</p>
-                                  </div>
+                                <div className="flex-shrink-0 h-9 w-2 rounded-full bg-orange-400" />
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-semibold truncate">{task.title}</p>
+                                  <p className="text-xs text-white/80 mt-1">Due Today · {formatDateTime(task.dueDate)}</p>
                                 </div>
+                                <div className="text-xs text-white/70 ml-2">Today</div>
                               </div>
                             ))}
                           </>
