@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
   HiMoon, HiSun, HiLogout, HiInformationCircle, HiBell,
-  HiAdjustments, HiShieldCheck, HiServer, HiSparkles
+  HiAdjustments, HiShieldCheck, HiServer, HiSparkles, HiShieldExclamation
 } from 'react-icons/hi';
 import Button from '../components/common/Button';
 import toast from 'react-hot-toast';
@@ -55,11 +55,17 @@ const SettingsPage = () => {
   const [defaultCategory, setDefaultCategory] = useState('Work');
   const [defaultPriority, setDefaultPriority] = useState('Medium');
   const [autoArchive, setAutoArchive] = useState(false);
+  const [twoFactor, setTwoFactor] = useState(false);
 
   const handleLogout = () => {
     logout();
     toast.success('Logged out successfully');
     navigate('/login');
+  };
+
+  const toggle2FA = () => {
+    setTwoFactor(!twoFactor);
+    toast.success(`Two-Factor Authentication turned ${!twoFactor ? 'ON' : 'OFF'}`);
   };
 
   return (
@@ -193,7 +199,7 @@ const SettingsPage = () => {
               <h2 className="font-semibold text-slate-800 dark:text-slate-200">About Product</h2>
             </div>
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                 <HiSparkles className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -204,11 +210,35 @@ const SettingsPage = () => {
             </div>
           </div>
 
+          {/* Security Log & 2FA */}
+          <div className="card p-6">
+            <div className="flex items-center gap-2 mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">
+              <HiShieldCheck className="h-5 w-5 text-green-500" />
+              <h2 className="font-semibold text-slate-800 dark:text-slate-200">Security Credentials</h2>
+            </div>
+            <ToggleSetting
+              label="Two-Factor Auth (2FA)"
+              description="Protect your account with verification codes"
+              enabled={twoFactor}
+              onChange={toggle2FA}
+            />
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+              <div className="flex justify-between text-[11px] text-slate-400">
+                <span>Active Login:</span>
+                <span className="font-medium text-slate-600 dark:text-slate-300">Chrome, Windows</span>
+              </div>
+              <div className="flex justify-between text-[11px] text-slate-400">
+                <span>Last Password Change:</span>
+                <span className="font-medium text-slate-600 dark:text-slate-300">July 5, 2026</span>
+              </div>
+            </div>
+          </div>
+
           {/* Danger Zone */}
           <div className="card p-6 border-red-200 dark:border-red-950/40 bg-red-50/10">
             <div className="flex items-center gap-2 mb-4 border-b border-red-100 dark:border-red-950/20 pb-2">
-              <HiShieldCheck className="h-5 w-5 text-red-500" />
-              <h2 className="font-semibold text-slate-800 dark:text-slate-200">Security</h2>
+              <HiShieldExclamation className="h-5 w-5 text-red-500" />
+              <h2 className="font-semibold text-slate-800 dark:text-slate-200">Danger Zone</h2>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Disconnect from current device sessions by signing out from this application securely.</p>
             <Button
