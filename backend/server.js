@@ -2,6 +2,7 @@ require('dotenv').config();
 require('express-async-errors');
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -32,6 +33,8 @@ app.use(cors({
   },
   credentials: true,
 }));
+// Compress all responses (gzip) — reduces payload size by ~70-80%
+app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -64,9 +67,10 @@ app.listen(PORT, () => {
   console.log(`📍 Environment: ${process.env.NODE_ENV}`);
   console.log(`🔗 URL: http://localhost:${PORT}/api/health\n`);
 
-  // Run overdue tasks check on startup and every 15 seconds
-  setTimeout(checkOverdueTasks, 5000); // 5s delay after start
-  setInterval(checkOverdueTasks, 15000);
+  // Run overdue tasks check on startup and every 5 minutes
+  // (15-second interval was too aggressive and competed with user requests)
+  setTimeout(checkOverdueTasks, 10000); // 10s delay after start
+  setInterval(checkOverdueTasks, 5 * 60 * 1000);
 });
 
 module.exports = app;

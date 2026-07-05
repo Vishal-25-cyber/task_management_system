@@ -53,37 +53,45 @@ const DashboardPage = () => {
   const loadDashboardData = async () => {
     setLoading(true);
     try {
+      // 2 calls instead of 4 — filter client-side from a single task fetch
+      const [analyticsRes, tasksRes] = await Promise.all([
+        analyticsService.getAnalytics(),
+        taskService.getTasks({ sortBy: 'createdAt', order: 'desc', archived: 'false' }),
+      ]);
+
+      const allTasks = tasksRes.data.tasks || [];
+      const now = new Date();
       const endOfToday = new Date();
       endOfToday.setHours(23, 59, 59, 999);
 
-      const [analyticsRes, recentRes, dueTodayRes, overdueRes] = await Promise.all([
-        analyticsService.getAnalytics(),
-        taskService.getTasks({ sortBy: 'createdAt', order: 'desc', archived: 'false' }),
-        taskService.getTasks({
-          archived: 'false',
-          dueDateFrom: new Date().toISOString(),
-          dueDateTo: endOfToday.toISOString(),
-        }),
-        taskService.getTasks({
-          archived: 'false',
-          dueDateTo: new Date().toISOString(),
-        }),
-      ]);
       setAnalytics(analyticsRes.data.analytics);
-      setRecentTasks(recentRes.data.tasks.slice(0, 5));
-      setDueTodayTasks(dueTodayRes.data.tasks.filter(t => t.status !== 'Completed').slice(0, 5));
-      setOverdueTasks(overdueRes.data.tasks.filter(t => t.status !== 'Completed').slice(0, 3));
+      setRecentTasks(allTasks.slice(0, 5));
 
-      // Calculate highest priority task
-      const allTasks = recentRes.data.tasks || [];
-      const highTasks = allTasks.filter(t => t.priority === 'High' && t.status !== 'Completed');
-      const sortedHigh = highTasks.sort((a, b) => {
+      // Filter overdue & due-today client-side (no extra network round-trips)
+      setDueTodayTasks(
+        allTasks
+          .filter((t) => {
+            if (!t.dueDate || t.status === 'Completed') return false;
+            const d = new Date(t.dueDate);
+            return d >= now && d <= endOfToday;
+          })
+          .slice(0, 5)
+      );
+      setOverdueTasks(
+        allTasks
+          .filter((t) => t.dueDate && t.status !== 'Completed' && new Date(t.dueDate) < now)
+          .slice(0, 3)
+      );
+
+      // Highest priority task
+      const highTasks = allTasks.filter((t) => t.priority === 'High' && t.status !== 'Completed');
+      highTasks.sort((a, b) => {
         if (a.dueDate && b.dueDate) return new Date(a.dueDate) - new Date(b.dueDate);
         if (a.dueDate) return -1;
         if (b.dueDate) return 1;
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
-      setHighPriorityTask(sortedHigh[0] || null);
+      setHighPriorityTask(highTasks[0] || null);
     } catch (err) {
       console.error('Dashboard load error', err);
     } finally {

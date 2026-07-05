@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiStar, HiOutlineStar, HiPencil, HiTrash, HiArchive, HiCalendar, HiChevronUp, HiChevronDown } from 'react-icons/hi';
 import { HiArrowUpTray } from 'react-icons/hi2';
@@ -124,4 +124,4 @@ const TaskTable = ({ tasks, onEdit, onDelete, onArchive, onFavorite, onView }) =
   );
 };
 
-export default TaskTable;
+export default memo(TaskTable);

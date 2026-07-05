@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { motion } from 'framer-motion';
 import { HiStar, HiOutlineStar, HiPencil, HiTrash, HiArchive, HiCalendar, HiClock, HiTag, HiFlag } from 'react-icons/hi';
 import { HiArrowUpTray } from 'react-icons/hi2';
@@ -110,4 +110,5 @@ const TaskCard = ({ task, onEdit, onDelete, onArchive, onFavorite, onView }) => 
   );
 };
 
-export default TaskCard;
+// memo prevents re-render when sibling tasks change
+export default memo(TaskCard);

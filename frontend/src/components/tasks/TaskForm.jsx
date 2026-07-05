@@ -28,8 +28,22 @@ const TaskForm = ({ defaultValues, onSubmit, onCancel, loading }) => {
     },
   });
 
+  // Convert the datetime-local string (which has no timezone) to a proper ISO
+  // string before passing to the parent, so the backend stores the exact local
+  // time the user entered rather than treating it as UTC.
+  const handleFormSubmit = (data) => {
+    if (data.dueDate) {
+      // new Date('YYYY-MM-DDTHH:mm') treats the string as LOCAL time and
+      // converts to UTC correctly — exactly what we want.
+      data.dueDate = new Date(data.dueDate).toISOString();
+    } else {
+      data.dueDate = null;
+    }
+    onSubmit(data);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-4">
       {/* Title */}
       <div>
         <label className={labelClass}>Title <span className="text-red-500">*</span></label>
