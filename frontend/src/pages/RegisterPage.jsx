@@ -48,12 +48,13 @@ const RegisterPage = () => {
         <p className="text-xs text-slate-400">Start managing your tasks today</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" autoComplete="off">
         {/* Name */}
         <div>
           <div className="relative">
             <HiUser className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <input
+              autoComplete="off"
               {...register('name', { required: 'Name is required', minLength: { value: 2, message: 'At least 2 characters' } })}
               className={inputClass}
               placeholder="Full name"
@@ -68,6 +69,7 @@ const RegisterPage = () => {
             <HiMail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <input
               type="email"
+              autoComplete="off"
               {...register('email', { required: 'Email is required', pattern: { value: /\S+@\S+\.\S+/, message: 'Invalid email' } })}
               className={inputClass}
               placeholder="Email address"
@@ -82,6 +84,7 @@ const RegisterPage = () => {
             <HiLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <input
               type={showPwd ? 'text' : 'password'}
+              autoComplete="new-password"
               {...register('password', { required: 'Password required', minLength: { value: 6, message: 'At least 6 characters' } })}
               className={`${inputClass} pr-10`}
               placeholder="Password"
@@ -99,6 +102,7 @@ const RegisterPage = () => {
             <HiLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <input
               type={showConfirm ? 'text' : 'password'}
+              autoComplete="new-password"
               {...register('confirmPassword', {
                 required: 'Please confirm your password',
                 validate: (v) => v === password || 'Passwords do not match',
