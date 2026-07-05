@@ -30,7 +30,7 @@ const BOTTOM_ITEMS = [
   { path: '/profile', icon: HiUser, label: 'Profile' },
 ];
 
-const MotionNavLink = motion(NavLink);
+const MotionNavLink = motion.create(NavLink);
 
 const SidebarLink = ({ item, collapsed }) => (
   <MotionNavLink
