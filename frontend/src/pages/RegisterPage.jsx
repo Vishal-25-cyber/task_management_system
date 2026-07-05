@@ -22,14 +22,12 @@ const RegisterPage = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const res = await registerUser(data);
-      // If register endpoint doesn't return a token, attempt login explicitly
-      if (!res?.token) {
-        try {
-          await login({ email: data.email, password: data.password });
-        } catch (e) {
-          // ignore — user can still manually sign in
-        }
+      await registerUser(data);
+      // Ensure user is logged in (some backends don't return a token on register)
+      try {
+        await login({ email: data.email, password: data.password });
+      } catch (e) {
+        // ignore — if login fails, ProtectedRoute will redirect to login
       }
       toast.success('🎉 Account created! Welcome to TaskFlow Pro');
       navigate('/dashboard');
