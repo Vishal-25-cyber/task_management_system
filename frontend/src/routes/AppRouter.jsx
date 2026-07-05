@@ -16,6 +16,7 @@ import AnalyticsPage from '../pages/AnalyticsPage';
 import FavoritesPage from '../pages/FavoritesPage';
 import ArchivedPage from '../pages/ArchivedPage';
 import ProfilePage from '../pages/ProfilePage';
+import NotificationsPage from '../pages/NotificationsPage';
 import SettingsPage from '../pages/SettingsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
@@ -55,6 +56,7 @@ const AppRouter = () => (
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/archived" element={<ArchivedPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="/settings" element={<ProfilePage />} />
             </Route>
           </Route>
