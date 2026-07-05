@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -132,9 +132,10 @@ const DashboardLayout = () => {
 
   useEffect(() => {
     fetchNotificationTasks();
+    // Refresh notifications every 60s — NOT on every route change
     const interval = setInterval(fetchNotificationTasks, 60000);
     return () => clearInterval(interval);
-  }, [user, location.pathname]);
+  }, [user]);
 
   // Close mobile sidebar on route change
   useEffect(() => {
@@ -158,11 +159,17 @@ const DashboardLayout = () => {
     navigate('/login');
   };
 
-  const handleSearch = (e) => {
+  const searchTimerRef = useRef(null);
+
+  const handleSearch = useCallback((e) => {
     const val = e.target.value;
     setSearchQuery(val);
-    updateFilters({ search: val });
-  };
+    // Debounce: wait 300ms after last keystroke before hitting the API
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
+      updateFilters({ search: val });
+    }, 300);
+  }, [updateFilters]);
 
   const isTasksPage = location.pathname === '/tasks';
   const isDashboardPage = location.pathname === '/dashboard';
