@@ -182,6 +182,35 @@ const DashboardPage = () => {
                 </div>
               )}
 
+              {/* Focus: Top Priority Task */}
+              {highPriorityTask && (
+                <div className="card p-5 bg-gradient-to-br from-red-500/10 to-orange-500/5 border border-red-500/20 dark:from-red-950/20 dark:to-orange-950/5 dark:border-red-900/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 rounded-lg bg-red-500 text-white shadow-sm flex-shrink-0 animate-pulse">
+                      <HiFire className="h-4 w-4" />
+                    </div>
+                    <span className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">Top Priority Task</span>
+                  </div>
+                  <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 truncate mb-1">
+                    {highPriorityTask.title}
+                  </h3>
+                  {highPriorityTask.description && (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-3">
+                      {highPriorityTask.description}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2.5 border-t border-red-500/10 dark:border-red-900/20">
+                    <span>Due: {highPriorityTask.dueDate ? formatDate(highPriorityTask.dueDate) : 'No due date'}</span>
+                    <button
+                      onClick={() => navigate('/tasks')}
+                      className="text-xs font-semibold text-red-600 dark:text-red-400 hover:underline flex items-center gap-0.5"
+                    >
+                      Focus Now <HiArrowRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Recent Tasks */}
               <div className="card p-5">
                 <div className="flex items-center justify-between mb-4">
@@ -216,34 +245,6 @@ const DashboardPage = () => {
 
             {/* Right Sidebar Section */}
             <div className="space-y-6">
-              {/* Focus: Top Priority Task */}
-              {highPriorityTask && (
-                <div className="card p-5 bg-gradient-to-br from-red-500/10 to-orange-500/5 border border-red-500/20 dark:from-red-950/20 dark:to-orange-950/5 dark:border-red-900/30">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 rounded-lg bg-red-500 text-white shadow-sm flex-shrink-0 animate-pulse">
-                      <HiFire className="h-4 w-4" />
-                    </div>
-                    <span className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">Top Priority Task</span>
-                  </div>
-                  <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 truncate mb-1">
-                    {highPriorityTask.title}
-                  </h3>
-                  {highPriorityTask.description && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-3">
-                      {highPriorityTask.description}
-                    </p>
-                  )}
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2.5 border-t border-red-500/10 dark:border-red-900/20">
-                    <span>Due: {highPriorityTask.dueDate ? formatDate(highPriorityTask.dueDate) : 'No due date'}</span>
-                    <button
-                      onClick={() => navigate('/tasks')}
-                      className="text-xs font-semibold text-red-600 dark:text-red-400 hover:underline flex items-center gap-0.5"
-                    >
-                      Focus Now <HiArrowRight className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-              )}
 
               {/* Quick Actions */}
               <div className="card p-5">

@@ -34,49 +34,30 @@ const SidebarLink = ({ item, collapsed }) => (
   <NavLink
     to={item.path}
     className={({ isActive }) =>
-      `flex items-center gap-3 pl-4 pr-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative border border-transparent ${
-        isActive
-          ? 'text-white shadow-glow'
-          : 'text-slate-700 dark:text-slate-300 hover:bg-white/20 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white hover:border-slate-200/30 dark:hover:border-slate-700/10'
+      `flex items-center gap-3 pl-4 pr-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative border ${isActive
+        ? 'bg-gradient-to-r from-indigo-500/80 to-purple-600/80 dark:from-indigo-600/75 dark:to-purple-700/75 text-white shadow-glow border-indigo-400/20 dark:border-indigo-500/20'
+        : 'text-slate-700 dark:text-slate-300 hover:bg-white/20 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white border-transparent hover:border-slate-200/30 dark:hover:border-slate-700/10'
       }`
     }
   >
     {({ isActive }) => (
       <>
-        {/* Animated Sliding Background */}
-        {isActive && (
-          <motion.div
-            layoutId="sidebarActiveBackground"
-            className="absolute inset-0 bg-gradient-to-r from-indigo-500/80 to-purple-600/80 dark:from-indigo-600/75 dark:to-purple-700/75 rounded-xl border border-indigo-400/20 dark:border-indigo-500/20 z-0"
-            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-          />
-        )}
-
-        <motion.div
-          animate={isActive ? { scale: [1, 1.18, 1] } : {}}
-          transition={{ duration: 0.3 }}
-          className="relative z-10 flex items-center justify-center flex-shrink-0"
-        >
-          <item.icon className="h-5 w-5 transition-transform group-hover:scale-110" />
-        </motion.div>
-
+        <item.icon className={`h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-110`} />
         <AnimatePresence>
           {!collapsed && (
             <motion.span
               initial={{ opacity: 0, width: 0 }}
               animate={{ opacity: 1, width: 'auto' }}
               exit={{ opacity: 0, width: 0 }}
-              className="overflow-hidden whitespace-nowrap relative z-10"
+              className="overflow-hidden whitespace-nowrap"
             >
               {item.label}
             </motion.span>
           )}
         </AnimatePresence>
-
         {isActive && (
-          <span className="absolute left-1.5 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full bg-white shadow-[0_0_8px_#ffffff] z-10" />
+          <span className="absolute left-1.5 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full bg-white shadow-[0_0_8px_#ffffff]" />
         )}
-
         {collapsed && (
           <div className="absolute left-full ml-2 px-2 py-1 bg-slate-900 dark:bg-slate-700 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity">
             {item.label}
@@ -94,9 +75,9 @@ const LiveClock = () => {
     const tick = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(tick);
   }, []);
-  const hh   = now.getHours().toString().padStart(2, '0');
-  const mm   = now.getMinutes().toString().padStart(2, '0');
-  const ss   = now.getSeconds().toString().padStart(2, '0');
+  const hh = now.getHours().toString().padStart(2, '0');
+  const mm = now.getMinutes().toString().padStart(2, '0');
+  const ss = now.getSeconds().toString().padStart(2, '0');
   const date = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
   return (
     <motion.div
