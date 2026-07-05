@@ -316,68 +316,78 @@ const DashboardLayout = () => {
                 <AnimatePresence>
                   {showNotifications && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.96, y: -6 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.96, y: -6 }}
-                      transition={{ type: 'spring', damping: 18, stiffness: 260 }}
-                      className="absolute right-0 mt-2 w-96 bg-gradient-to-br from-indigo-600/95 to-purple-600/90 text-white backdrop-blur-lg border border-white/10 rounded-3xl shadow-2xl z-50 overflow-hidden origin-top-right"
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.12 }}
+                      className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 backdrop-blur-sm border border-slate-200/40 dark:border-slate-800/40 rounded-xl shadow-lg z-50 overflow-hidden origin-top-right"
                     >
-                      <div className="px-4 py-3 flex items-center justify-between bg-white/10">
+                      <div className="px-4 py-3 flex items-center justify-between border-b border-slate-100/40 dark:border-slate-800/40">
                         <div className="flex items-center gap-3">
-                          <HiBell className="h-5 w-5 text-white" />
-                          <span className="font-semibold text-white text-sm">Notifications</span>
+                          <HiBell className="h-5 w-5 text-slate-700 dark:text-slate-200" />
+                          <span className="font-medium text-slate-800 dark:text-slate-100 text-sm">Notifications</span>
                         </div>
-                        {totalAlertsCount > 0 && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-red-500 text-white font-medium">
-                            {totalAlertsCount} Alert{totalAlertsCount > 1 ? 's' : ''}
-                          </span>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {totalAlertsCount > 0 && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-red-50 dark:bg-red-900 text-red-600 dark:text-red-300 font-medium">
+                              {totalAlertsCount}
+                            </span>
+                          )}
+                          <button
+                            onClick={() => { /* placeholder: mark all read */ }}
+                            className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                          >
+                            Mark all
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="max-h-64 overflow-y-auto p-3 space-y-2">
+                      <div className="max-h-64 overflow-y-auto">
                         {totalAlertsCount === 0 ? (
-                          <div className="p-6 text-center text-sm text-white/80">
+                          <div className="p-4 text-center text-sm text-slate-500 dark:text-slate-400">
                             🎉 No pending alerts — all tasks are on schedule.
                           </div>
                         ) : (
-                          <> 
+                          <div className="p-2">
                             {overdueAlerts.map((task) => (
                               <div
                                 key={task._id}
-                                onClick={() => {
-                                  setShowNotifications(false);
-                                  navigate('/tasks');
-                                }}
-                                className="flex items-start gap-3 p-3 bg-white/10 hover:bg-white/15 rounded-xl cursor-pointer transition-colors"
+                                onClick={() => { setShowNotifications(false); navigate('/tasks'); }}
+                                className="flex items-center gap-3 p-3 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer"
                               >
-                                <div className="flex-shrink-0 h-9 w-2 rounded-full bg-red-400" />
-                                <div className="min-w-0 flex-1">
-                                  <p className="text-sm font-semibold truncate">{task.title}</p>
-                                  <p className="text-xs text-white/80 mt-1">Overdue · {formatDateTime(task.dueDate)}</p>
+                                <div className="flex-shrink-0 h-10 w-10 rounded-md bg-red-50 dark:bg-red-900 flex items-center justify-center">
+                                  <span className="text-red-600 dark:text-red-300">●</span>
                                 </div>
-                                <div className="text-xs text-white/70 ml-2">Now</div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{task.title}</p>
+                                  <p className="text-xs text-slate-500 dark:text-slate-400">Overdue · {formatDateTime(task.dueDate)}</p>
+                                </div>
+                                <div className="text-xs text-slate-400">Now</div>
                               </div>
                             ))}
 
                             {dueTodayAlerts.map((task) => (
                               <div
                                 key={task._id}
-                                onClick={() => {
-                                  setShowNotifications(false);
-                                  navigate('/tasks');
-                                }}
-                                className="flex items-start gap-3 p-3 bg-white/10 hover:bg-white/15 rounded-xl cursor-pointer transition-colors"
+                                onClick={() => { setShowNotifications(false); navigate('/tasks'); }}
+                                className="flex items-center gap-3 p-3 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer"
                               >
-                                <div className="flex-shrink-0 h-9 w-2 rounded-full bg-orange-400" />
-                                <div className="min-w-0 flex-1">
-                                  <p className="text-sm font-semibold truncate">{task.title}</p>
-                                  <p className="text-xs text-white/80 mt-1">Due Today · {formatDateTime(task.dueDate)}</p>
+                                <div className="flex-shrink-0 h-10 w-10 rounded-md bg-yellow-50 dark:bg-orange-900 flex items-center justify-center">
+                                  <span className="text-orange-600 dark:text-orange-300">●</span>
                                 </div>
-                                <div className="text-xs text-white/70 ml-2">Today</div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{task.title}</p>
+                                  <p className="text-xs text-slate-500 dark:text-slate-400">Due Today · {formatDateTime(task.dueDate)}</p>
+                                </div>
+                                <div className="text-xs text-slate-400">Today</div>
                               </div>
                             ))}
-                          </>
+                          </div>
                         )}
+                      </div>
+
+                      <div className="px-3 py-2 border-t border-slate-100/40 dark:border-slate-800/40 text-center">
+                        <button onClick={() => navigate('/notifications')} className="text-sm text-indigo-600 hover:underline dark:text-indigo-400">View all</button>
                       </div>
                     </motion.div>
                   )}
