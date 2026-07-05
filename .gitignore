@@ -26,3 +26,6 @@ Thumbs.db
 # Editor
 .vscode/
 *.swp
+
+# Simulated local emails
+frontend/public/sent-emails/
