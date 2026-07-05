@@ -169,14 +169,17 @@ const DashboardLayout = () => {
     <div className="flex flex-col h-full relative z-10">
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 mb-2">
-        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-glow-sm">
-          <HiSparkles className="h-5 w-5 text-white" />
+        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-rose-500 via-indigo-600 to-violet-600 flex items-center justify-center flex-shrink-0 shadow-glow-sm relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
+          <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2L2 22h20L12 2z" />
+            <path d="M12 17l-3-3h6l-3 3z" />
+          </svg>
         </div>
         <AnimatePresence>
           {!collapsed && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="font-bold text-slate-900 dark:text-white text-lg leading-tight">TaskFlow</div>
-              <div className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold">Pro</div>
+              <div className="font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-indigo-900 dark:from-white dark:to-indigo-200 text-base tracking-wide leading-tight font-sans">Aethera</div>
+              <div className="text-[9px] text-rose-500 dark:text-rose-400 font-bold uppercase tracking-widest mt-0.5">Workspace</div>
             </motion.div>
           )}
         </AnimatePresence>
