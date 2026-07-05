@@ -1,0 +1,87 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { HiEye, HiEyeOff, HiMail, HiLockClosed } from 'react-icons/hi';
+import { useAuth } from '../context/AuthContext';
+import Button from '../components/common/Button';
+import toast from 'react-hot-toast';
+
+const inputClass = 'w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-slate-700/60 bg-slate-950/60 text-slate-100 placeholder-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all';
+
+const LoginPage = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [showPwd, setShowPwd] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      await login(data);
+      toast.success('👋 Welcome back!');
+      navigate('/dashboard');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Login failed';
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-8">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-white mb-1">Welcome back</h2>
+        <p className="text-sm text-slate-400">Sign in to your account</p>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* Email */}
+        <div>
+          <div className="relative">
+            <HiMail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+            <input
+              type="email"
+              {...register('email', { required: 'Email required', pattern: { value: /\S+@\S+\.\S+/, message: 'Invalid email' } })}
+              className={inputClass}
+              placeholder="Email address"
+            />
+          </div>
+          {errors.email && <p className="text-xs text-red-400 mt-1">{errors.email.message}</p>}
+        </div>
+
+        {/* Password */}
+        <div>
+          <div className="relative">
+            <HiLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+            <input
+              type={showPwd ? 'text' : 'password'}
+              {...register('password', { required: 'Password required' })}
+              className={`${inputClass} pr-10`}
+              placeholder="Password"
+            />
+            <button type="button" onClick={() => setShowPwd((p) => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+              {showPwd ? <HiEyeOff className="h-5 w-5" /> : <HiEye className="h-5 w-5" />}
+            </button>
+          </div>
+          {errors.password && <p className="text-xs text-red-400 mt-1">{errors.password.message}</p>}
+        </div>
+
+        <Button type="submit" variant="primary" size="lg" className="w-full mt-2" loading={loading}>
+          Sign In
+        </Button>
+      </form>
+
+      <p className="text-center text-sm text-slate-400 mt-6">
+        Don't have an account?{' '}
+        <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+          Sign up free
+        </Link>
+      </p>
+    </div>
+  );
+};
+
+export default LoginPage;
