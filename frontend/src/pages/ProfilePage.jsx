@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiUser, HiMail, HiCalendar, HiPencil, HiLockClosed, HiUpload,
   HiSun, HiInformationCircle, HiLogout, HiBell, HiSparkles
@@ -43,6 +43,87 @@ const ProfilePage = () => {
   const [emailLoading, setEmailLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
+  // Image Crop states
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  
+  const canvasRef = useRef(null);
+
+  // Canvas drawing effect for circular crop area
+  useEffect(() => {
+    if (!selectedImage || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const size = canvas.width; // 240px
+
+    // Clear canvas
+    ctx.clearRect(0, 0, size, size);
+
+    const imgWidth = selectedImage.width;
+    const imgHeight = selectedImage.height;
+
+    // Scale to cover canvas circle
+    const ratio = Math.max(size / imgWidth, size / imgHeight);
+    const width = imgWidth * ratio * scale;
+    const height = imgHeight * ratio * scale;
+
+    // Manual dragging offsets centered on canvas
+    const x = (size - width) / 2 + position.x;
+    const y = (size - height) / 2 + position.y;
+
+    ctx.save();
+    
+    // Draw outer dark overlay
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.6)';
+    ctx.fillRect(0, 0, size, size);
+
+    // Circular crop cutout
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Reset composite operation to draw the image inside
+    ctx.globalCompositeOperation = 'destination-over';
+    ctx.drawImage(selectedImage, x, y, width, height);
+
+    ctx.restore();
+
+    // Draw circular guideline border
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size / 2 - 1, 0, Math.PI * 2);
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }, [selectedImage, scale, position]);
+
+  // Dragging event handlers
+  const handlePointerDown = (e) => {
+    setIsDragging(true);
+    const clientX = e.clientX || e.touches?.[0]?.clientX;
+    const clientY = e.clientY || e.touches?.[0]?.clientY;
+    setDragStart({ x: clientX - position.x, y: clientY - position.y });
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isDragging) return;
+    const clientX = e.clientX || e.touches?.[0]?.clientX;
+    const clientY = e.clientY || e.touches?.[0]?.clientY;
+    setPosition({
+      x: clientX - dragStart.x,
+      y: clientY - dragStart.y
+    });
+  };
+
+  const handlePointerUp = () => {
+    setIsDragging(false);
+  };
+
   // Notifications toggles state
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [systemAlerts, setSystemAlerts] = useState(false);
@@ -55,30 +136,70 @@ const ProfilePage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('Image must be less than 2MB');
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be less than 5MB');
       return;
     }
 
     const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64String = reader.result;
-      try {
-        setProfileLoading(true);
-        const res = await authService.updateProfile({
-          name: user?.name,
-          email: user?.email,
-          avatar: base64String
-        });
-        updateUser(res.data.user);
-        toast.success('📸 Profile picture updated!');
-      } catch (err) {
-        toast.error(err.response?.data?.message || 'Failed to update avatar');
-      } finally {
-        setProfileLoading(false);
-      }
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        setSelectedImage(img);
+        setScale(1);
+        setPosition({ x: 0, y: 0 });
+        setShowCropModal(true);
+      };
+      img.src = reader.result;
     };
     reader.readAsDataURL(file);
+    // Reset file input value so same file can be selected again
+    e.target.value = null;
+  };
+
+  const handleSaveCrop = async () => {
+    if (!canvasRef.current) return;
+    
+    // Create an offscreen canvas to output only the circular cropped region cleanly without overlays
+    const size = 240;
+    const offscreen = document.createElement('canvas');
+    offscreen.width = size;
+    offscreen.height = size;
+    const oCtx = offscreen.getContext('2d');
+
+    const imgWidth = selectedImage.width;
+    const imgHeight = selectedImage.height;
+    const ratio = Math.max(size / imgWidth, size / imgHeight);
+    const width = imgWidth * ratio * scale;
+    const height = imgHeight * ratio * scale;
+    const x = (size - width) / 2 + position.x;
+    const y = (size - height) / 2 + position.y;
+
+    oCtx.save();
+    oCtx.beginPath();
+    oCtx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+    oCtx.clip();
+    oCtx.drawImage(selectedImage, x, y, width, height);
+    oCtx.restore();
+
+    const base64String = offscreen.toDataURL('image/jpeg', 0.92);
+
+    try {
+      setProfileLoading(true);
+      const res = await authService.updateProfile({
+        name: user?.name,
+        email: user?.email,
+        avatar: base64String
+      });
+      updateUser(res.data.user);
+      toast.success('📸 Profile picture updated successfully!');
+      setShowCropModal(false);
+      setSelectedImage(null);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update avatar');
+    } finally {
+      setProfileLoading(false);
+    }
   };
 
   const onProfileSubmit = async (data) => {
@@ -328,6 +449,94 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      {/* Crop Modal */}
+      <AnimatePresence>
+        {showCropModal && selectedImage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-100 dark:border-slate-800"
+            >
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <h3 className="font-bold text-slate-900 dark:text-white text-base">Crop Profile Picture</h3>
+                <button
+                  onClick={() => {
+                    setShowCropModal(false);
+                    setSelectedImage(null);
+                  }}
+                  className="text-slate-400 hover:text-slate-500 dark:hover:text-slate-300 text-sm font-semibold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="p-6 flex flex-col items-center">
+                <p className="text-xs text-slate-500 dark:text-slate-400 text-center mb-6 max-w-xs">
+                  Drag the image to position it inside the circle guide, and use the zoom slider below to adjust.
+                </p>
+
+                {/* Cropping Area Canvas */}
+                <div className="relative h-[240px] w-[240px] rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-950 shadow-inner flex items-center justify-center cursor-move select-none touch-none">
+                  <canvas
+                    ref={canvasRef}
+                    width={240}
+                    height={240}
+                    onPointerDown={handlePointerDown}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={handlePointerUp}
+                    onPointerLeave={handlePointerUp}
+                    className="w-full h-full select-none"
+                  />
+                </div>
+
+                {/* Zoom Control Slider */}
+                <div className="w-full mt-8 space-y-2">
+                  <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+                    <span>Zoom Out</span>
+                    <span>Zoom In ({Math.round(scale * 100)}%)</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="3"
+                    step="0.01"
+                    value={scale}
+                    onChange={(e) => setScale(parseFloat(e.target.value))}
+                    className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                  />
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setShowCropModal(false);
+                    setSelectedImage(null);
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={handleSaveCrop}
+                  loading={profileLoading}
+                  className="flex-1"
+                >
+                  Crop & Save
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
