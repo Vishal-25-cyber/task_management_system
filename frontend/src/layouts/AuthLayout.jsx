@@ -13,7 +13,7 @@ const AuthLayout = () => {
       style={{ backgroundImage: "url('/auth-bg.png')" }}
     >
       {/* Premium dark gradient mask and blur overlay for extreme readability */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/90 via-indigo-950/80 to-slate-950/95 backdrop-blur-[6px] pointer-events-none" />
+      <div className="absolute inset-0 bg-slate-950/65 backdrop-blur-[3px] pointer-events-none" />
 
       {/* Modern ambient glowing orbs in corners */}
       <div className="absolute -top-32 -left-32 h-[350px] w-[350px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />
@@ -24,7 +24,7 @@ const AuthLayout = () => {
         initial={{ opacity: 0, y: 20, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="relative z-10 w-full max-w-md bg-slate-900/60 backdrop-blur-2xl rounded-2xl shadow-glow-xl border border-white/10 overflow-hidden"
+        className="relative z-10 w-full max-w-md bg-slate-950/40 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden"
       >
         {/* Glowing top line accent */}
         <div className="h-1 w-full bg-gradient-to-r from-rose-500 via-indigo-500 to-violet-600" />
