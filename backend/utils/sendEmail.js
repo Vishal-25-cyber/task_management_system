@@ -50,12 +50,19 @@ const sendEmail = async (options) => {
 
   let transporter;
   if (process.env.SMTP_HOST && process.env.SMTP_USER) {
+    // Respect optional SMTP_SECURE env (true/false). Default to false for STARTTLS (port 587).
+    const secure = (process.env.SMTP_SECURE || 'false').toLowerCase() === 'true';
     transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT || 2525,
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
+      },
+      tls: {
+        // Allow self-signed certs if necessary (helps with some SMTP gateways); rejection is default.
+        rejectUnauthorized: false,
       },
     });
   } else {
@@ -74,7 +81,7 @@ const sendEmail = async (options) => {
   }
 
   const message = {
-    from: `"TaskHub" <no-reply@taskhub.com>`,
+    from: process.env.FROM_EMAIL || `"TaskHub" <no-reply@taskhub.com>`,
     to: options.email,
     subject: options.subject,
     html: options.html,
@@ -84,15 +91,21 @@ const sendEmail = async (options) => {
     const info = await transporter.sendMail(message);
     const previewUrl = nodemailer.getTestMessageUrl(info) || localPreviewUrl;
     console.log(`✉️ Email successfully dispatched via SMTP: ${options.subject}`);
+    console.log('SMTP response:', info);
     return {
+      sent: true,
       messageId: info.messageId,
+      response: info.response,
       previewUrl,
     };
   } catch (smtpError) {
     // If SMTP fails, print warning but gracefully fallback to local file so task.overdueEmailSent marks as true
     console.warn(`⚠️ SMTP Dispatch Failed: ${smtpError.message}. Fell back to local HTML preview: ${localPreviewUrl}`);
+    console.warn(smtpError);
     return {
+      sent: false,
       messageId: `local-${timestamp}`,
+      error: smtpError.message,
       previewUrl: localPreviewUrl,
     };
   }

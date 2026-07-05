@@ -50,6 +50,22 @@ const taskSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    overdueEmailMessageId: {
+      type: String,
+      default: null,
+    },
+    overdueEmailSentAt: {
+      type: Date,
+      default: null,
+    },
+    overdueEmailError: {
+      type: String,
+      default: null,
+    },
+    overdueEmailPreviewUrl: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

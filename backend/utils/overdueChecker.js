@@ -26,7 +26,7 @@ const checkOverdueTasks = async () => {
             <p style="margin: 5px 0 0 0; font-size: 13px; color: #991b1b;"><strong>Due Date:</strong> ${task.dueDate.toLocaleDateString()}</p>
           </div>
           
-          <p style="color: #64748b; font-size: 12px; margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 15px;">Please update the status or adjust the deadline.<br/>TaskFlow Pro Support Team</p>
+          <p style="color: #64748b; font-size: 12px; margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 15px;">Please update the status or adjust the deadline.<br/>TaskHub Support Team</p>
         </div>
       `;
 
@@ -37,11 +37,26 @@ const checkOverdueTasks = async () => {
           html,
         });
 
-        task.overdueEmailSent = true;
-        await task.save();
-        console.log(`✉️ Overdue email notification sent to ${user.email} for task "${task.title}". Preview URL: ${result.previewUrl || 'N/A'}`);
+        // Record metadata and only mark as sent when SMTP actually delivered
+        task.overdueEmailMessageId = result.messageId || null;
+        task.overdueEmailPreviewUrl = result.previewUrl || null;
+
+        if (result.sent) {
+          task.overdueEmailSent = true;
+          task.overdueEmailSentAt = new Date();
+          task.overdueEmailError = null;
+          await task.save();
+          console.log(`✉️ Overdue email delivered to ${user.email} for task "${task.title}". MessageId: ${result.messageId}. Preview: ${result.previewUrl || 'N/A'}`);
+        } else {
+          // keep overdueEmailSent = false so it will retry on next run
+          task.overdueEmailError = result.error || 'Unknown SMTP error';
+          await task.save();
+          console.warn(`⚠️ Overdue email NOT delivered to ${user.email} for task "${task.title}". Will retry later. Preview: ${result.previewUrl || 'N/A'}. Error: ${task.overdueEmailError}`);
+        }
       } catch (emailErr) {
         console.error(`Failed to send overdue email for task ${task._id}:`, emailErr);
+        task.overdueEmailError = emailErr.message;
+        await task.save();
       }
     }
   } catch (err) {
