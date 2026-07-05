@@ -16,7 +16,7 @@ const RegisterPage = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm({ mode: 'onChange' });
   const password = watch('password');
 
   const onSubmit = async (data) => {
@@ -115,7 +115,7 @@ const RegisterPage = () => {
           {errors.confirmPassword && <p className="text-xs text-red-400 mt-1">{errors.confirmPassword.message}</p>}
         </div>
 
-        <Button type="submit" variant="primary" size="lg" className="w-full mt-2" loading={loading}>
+        <Button type="submit" variant="primary" size="lg" className="w-full mt-2" loading={loading} disabled={!isValid || loading}>
           Create Account
         </Button>
       </form>

@@ -14,7 +14,7 @@ const LoginPage = () => {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'onChange' });
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -60,7 +60,7 @@ const LoginPage = () => {
             <input
               type={showPwd ? 'text' : 'password'}
               autoComplete="new-password"
-              {...register('password', { required: 'Password required' })}
+              {...register('password', { required: 'Password required', minLength: { value: 6, message: 'At least 6 characters' } })}
               className={`${inputClass} pr-10`}
               placeholder="Password"
             />
@@ -71,7 +71,7 @@ const LoginPage = () => {
           {errors.password && <p className="text-xs text-red-400 mt-1">{errors.password.message}</p>}
         </div>
 
-        <Button type="submit" variant="primary" size="lg" className="w-full mt-2" loading={loading}>
+        <Button type="submit" variant="primary" size="lg" className="w-full mt-2" loading={loading} disabled={!isValid || loading}>
           Sign In
         </Button>
       </form>
