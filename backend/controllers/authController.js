@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const sendEmail = require('../utils/sendEmail');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -172,4 +173,44 @@ const changePassword = async (req, res) => {
   res.json({ success: true, message: 'Password changed successfully' });
 };
 
-module.exports = { register, login, getProfile, updateProfile, changePassword };
+// @desc    Send test email notification
+// @route   POST /api/auth/send-test-email
+// @access  Private
+const sendTestEmail = async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'User not found' });
+  }
+
+  const html = `
+    <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+      <h2 style="color: #4f46e5; margin-bottom: 12px; font-weight: 700; font-size: 20px;">🔔 TaskFlow Pro Alert</h2>
+      <p style="color: #334155; font-size: 15px; line-height: 1.6;">Hello <strong>${user.name}</strong>,</p>
+      <p style="color: #334155; font-size: 14px; line-height: 1.6;">This is a test notification email dispatched from your **TaskFlow Pro** settings. This confirms that your email notifications are correctly active!</p>
+      <div style="margin: 24px 0; padding: 16px; background-color: #f8fafc; border-left: 4px solid #4f46e5; border-radius: 8px;">
+        <p style="margin: 0; font-size: 13px; color: #475569;"><strong>Notification Channel:</strong> SMTP Web Alert</p>
+        <p style="margin: 5px 0 0 0; font-size: 13px; color: #475569;"><strong>Status:</strong> Success / Connected</p>
+      </div>
+      <p style="color: #64748b; font-size: 12px; margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 15px;">Have a productive day!<br/>TaskFlow Pro Support Team</p>
+    </div>
+  `;
+
+  try {
+    const result = await sendEmail({
+      email: user.email,
+      subject: '🔔 Test Notification from TaskFlow Pro',
+      html,
+    });
+
+    res.json({
+      success: true,
+      message: 'Test email notification sent successfully!',
+      previewUrl: result.previewUrl
+    });
+  } catch (err) {
+    console.error('Failed to send test email:', err);
+    res.status(500).json({ success: false, message: 'Failed to send test email notification' });
+  }
+};
+
+module.exports = { register, login, getProfile, updateProfile, changePassword, sendTestEmail };

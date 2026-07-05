@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
-const { register, login, getProfile, updateProfile, changePassword } = require('../controllers/authController');
+const { register, login, getProfile, updateProfile, changePassword, sendTestEmail } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
+
+router.post('/send-test-email', protect, sendTestEmail);
 
 router.post(
   '/register',
