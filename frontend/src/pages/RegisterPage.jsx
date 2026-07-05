@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import toast from 'react-hot-toast';
 
-const inputClass = 'w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-slate-700/60 bg-slate-950/60 text-slate-100 placeholder-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all';
+const inputClass = 'w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-white/10 bg-slate-950/20 text-slate-100 placeholder-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all backdrop-blur-[2px]';
 
 const RegisterPage = () => {
   const { register: registerUser } = useAuth();

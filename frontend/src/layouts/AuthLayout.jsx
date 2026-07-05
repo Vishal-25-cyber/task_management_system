@@ -24,7 +24,7 @@ const AuthLayout = () => {
         initial={{ opacity: 0, y: 20, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="relative z-10 w-full max-w-md bg-slate-950/40 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden"
+        className="relative z-10 w-full max-w-md bg-slate-950/15 backdrop-blur-[6px] rounded-2xl shadow-2xl border border-white/5 overflow-hidden"
       >
         {/* Glowing top line accent */}
         <div className="h-1 w-full bg-gradient-to-r from-rose-500 via-indigo-500 to-violet-600" />
