@@ -15,7 +15,13 @@ const AuthLayout = () => {
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff04_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
 
       {/* Left panel - Branding */}
-      <div className="hidden lg:flex lg:flex-1 items-center justify-center relative overflow-hidden px-12 border-r border-white/5">
+      <div
+        className="hidden lg:flex lg:flex-1 items-center justify-center relative overflow-hidden px-12 border-r border-white/5 bg-cover bg-center"
+        style={{ backgroundImage: "url('/auth-bg.png')" }}
+      >
+        {/* Readability overlay */}
+        <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-[2px] pointer-events-none" />
+
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
