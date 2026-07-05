@@ -69,6 +69,40 @@ const SidebarLink = ({ item, collapsed }) => (
   </NavLink>
 );
 
+// Standalone clock — isolated so its 1-second tick never re-renders DashboardLayout
+const LiveClock = () => {
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const tick = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(tick);
+  }, []);
+  const hh   = now.getHours().toString().padStart(2, '0');
+  const mm   = now.getMinutes().toString().padStart(2, '0');
+  const ss   = now.getSeconds().toString().padStart(2, '0');
+  const date = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3 }}
+      className="ml-auto flex items-center gap-3"
+    >
+      <span className="hidden md:block text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100/70 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg">
+        {date}
+      </span>
+      <div className="hidden md:block w-px h-5 bg-slate-200 dark:bg-slate-700" />
+      <div className="flex items-baseline gap-0.5">
+        <span className="text-lg font-bold tabular-nums tracking-tight text-slate-800 dark:text-slate-100">
+          {hh}:{mm}
+        </span>
+        <span className="text-xs font-semibold tabular-nums text-slate-400 dark:text-slate-500 ml-0.5">
+          :{ss}
+        </span>
+      </div>
+    </motion.div>
+  );
+};
+
 const DashboardLayout = () => {
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
@@ -80,7 +114,6 @@ const DashboardLayout = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [notificationTasks, setNotificationTasks] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [liveTime, setLiveTime] = useState(new Date());
 
   const fetchNotificationTasks = async () => {
     if (!user) return;
@@ -97,12 +130,6 @@ const DashboardLayout = () => {
     const interval = setInterval(fetchNotificationTasks, 60000);
     return () => clearInterval(interval);
   }, [user, location.pathname]);
-
-  // Live clock — ticks every second
-  useEffect(() => {
-    const tick = setInterval(() => setLiveTime(new Date()), 1000);
-    return () => clearInterval(tick);
-  }, []);
 
   // Close mobile sidebar on route change
   useEffect(() => {
@@ -134,12 +161,6 @@ const DashboardLayout = () => {
 
   const isTasksPage = location.pathname === '/tasks';
   const isDashboardPage = location.pathname === '/dashboard';
-
-  // Live clock values
-  const clockHH  = liveTime.getHours().toString().padStart(2, '0');
-  const clockMM  = liveTime.getMinutes().toString().padStart(2, '0');
-  const clockSS  = liveTime.getSeconds().toString().padStart(2, '0');
-  const clockDate = liveTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 
   const overdueAlerts = notificationTasks.filter(t => getDueDateStatus(t.dueDate, t.status) === 'overdue');
   const dueTodayAlerts = notificationTasks.filter(t => getDueDateStatus(t.dueDate, t.status) === 'today');
@@ -280,32 +301,7 @@ const DashboardLayout = () => {
           )}
 
           {/* Live clock — right side, all pages except Dashboard and Tasks */}
-          {!isDashboardPage && !isTasksPage && (
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3 }}
-              className="ml-auto flex items-center gap-3"
-            >
-              {/* Date */}
-              <span className="hidden md:block text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100/70 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg">
-                {clockDate}
-              </span>
-
-              {/* Divider */}
-              <div className="hidden md:block w-px h-5 bg-slate-200 dark:bg-slate-700" />
-
-              {/* Time */}
-              <div className="flex items-baseline gap-0.5">
-                <span className="text-lg font-bold tabular-nums tracking-tight text-slate-800 dark:text-slate-100">
-                  {clockHH}:{clockMM}
-                </span>
-                <span className="text-xs font-semibold tabular-nums text-slate-400 dark:text-slate-500 ml-0.5">
-                  :{clockSS}
-                </span>
-              </div>
-            </motion.div>
-          )}
+          {!isDashboardPage && !isTasksPage && <LiveClock />}
 
           {/* Right-side icons — Dashboard only */}
           {isDashboardPage && (
