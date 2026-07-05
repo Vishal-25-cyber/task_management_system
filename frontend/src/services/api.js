@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
+  // On Render, set VITE_API_URL to your backend URL (e.g. https://taskhub-api.onrender.com/api)
+  // Local development keeps using Vite proxy via /api.
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
