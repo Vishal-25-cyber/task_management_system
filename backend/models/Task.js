@@ -71,6 +71,7 @@ const taskSchema = new mongoose.Schema(
 );
 
 // Index for faster queries
+taskSchema.index({ userId: 1, archived: 1, createdAt: -1 }); // Crucial for default task sorting by newest first
 taskSchema.index({ userId: 1, archived: 1, status: 1 });
 taskSchema.index({ userId: 1, favorite: 1 });
 taskSchema.index({ userId: 1, dueDate: 1 });
