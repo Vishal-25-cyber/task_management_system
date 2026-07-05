@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 const inputClass = 'w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-white/10 bg-slate-950/20 text-slate-100 placeholder-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all backdrop-blur-[2px]';
 
 const RegisterPage = () => {
-  const { register: registerUser } = useAuth();
+  const { register: registerUser, login } = useAuth();
   const navigate = useNavigate();
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -22,7 +22,15 @@ const RegisterPage = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      await registerUser(data);
+      const res = await registerUser(data);
+      // If register endpoint doesn't return a token, attempt login explicitly
+      if (!res?.token) {
+        try {
+          await login({ email: data.email, password: data.password });
+        } catch (e) {
+          // ignore — user can still manually sign in
+        }
+      }
       toast.success('🎉 Account created! Welcome to TaskFlow Pro');
       navigate('/dashboard');
     } catch (err) {
