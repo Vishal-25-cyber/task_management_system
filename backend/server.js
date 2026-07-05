@@ -10,6 +10,7 @@ const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const utilsRoutes = require('./routes/utilsRoutes');
 
 // Connect to database
 connectDB();
@@ -34,6 +35,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/utils', utilsRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
