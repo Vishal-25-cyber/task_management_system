@@ -34,10 +34,10 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-1">Create Account</h2>
-        <p className="text-sm text-slate-400">Start managing your tasks today</p>
+    <div className="pt-2">
+      <div className="mb-6 text-center">
+        <h2 className="text-xl font-bold text-white mb-0.5">Create Account</h2>
+        <p className="text-xs text-slate-400">Start managing your tasks today</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

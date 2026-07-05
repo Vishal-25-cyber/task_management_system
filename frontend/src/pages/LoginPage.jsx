@@ -31,10 +31,10 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-1">Welcome back</h2>
-        <p className="text-sm text-slate-400">Sign in to your account</p>
+    <div className="pt-2">
+      <div className="mb-6 text-center">
+        <h2 className="text-xl font-bold text-white mb-0.5">Welcome back</h2>
+        <p className="text-xs text-slate-400">Sign in to your account</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
