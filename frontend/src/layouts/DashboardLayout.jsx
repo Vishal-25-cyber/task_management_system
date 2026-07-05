@@ -178,8 +178,8 @@ const DashboardLayout = () => {
         <AnimatePresence>
           {!collapsed && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-indigo-900 dark:from-white dark:to-indigo-200 text-base tracking-wide leading-tight font-sans">Aethera</div>
-              <div className="text-[9px] text-rose-500 dark:text-rose-400 font-bold uppercase tracking-widest mt-0.5">Workspace</div>
+              <div className="font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-indigo-900 dark:from-white dark:to-indigo-200 text-base tracking-wide leading-tight font-sans">TaskLoom</div>
+              <div className="text-[9px] text-rose-500 dark:text-rose-400 font-bold uppercase tracking-widest mt-0.5">Manager</div>
             </motion.div>
           )}
         </AnimatePresence>
